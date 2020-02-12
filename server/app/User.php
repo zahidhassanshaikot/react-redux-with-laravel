@@ -29,6 +29,10 @@ class User extends Authenticatable implements JWTSubject
         'password', 'remember_token',
     ];
 
+	public function transactions() {
+		return $this->hasMany('App\Transaction');
+	}
+
     /**
      * The attributes that should be cast to native types.
      *
@@ -49,6 +53,12 @@ class User extends Authenticatable implements JWTSubject
      */
     public function getJWTCustomClaims()
     {
-        return [];
+        return [
+            'id'              => $this->id,
+            'name'            => $this->name,
+            'email'           => $this->email,
+            'created_at'   => $this->created_at,
+            'updated_at' => $this->updated_at,
+        ];
     }
 }
