@@ -7,6 +7,7 @@ use App\Transaction;
 use JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\Contracts\JWTSubject;
+use Illuminate\Support\Facades\Validator;
 
 use App\Traits\ApiReturnFormat;
 
@@ -38,6 +39,45 @@ class TransactionController extends Controller
         
         // return $transactions;
         return $this->responseWithSuccess('Data Found',$transactions);
+    }
+    public function createTransaction(Request $request){
+
+        $validator = Validator::make($request->all(), [
+                'amount' => 'required|max:255',
+                'type' => 'required'
+            ]);
+
+            if($validator->fails()){
+                // return $validator->getMessageBag()->all();
+                return response()->json($validator->errors(), 422);
+            }
+
+
+        $user = JWTAuth::parseToken()->authenticate();
+        $transaction=new Transaction();
+        $transaction->amount=$request->amount;
+        $transaction->note=$request->note;
+        $transaction->type=$request->type;
+        $transaction->user_id=$user->id;
+        $transaction->save();
+
+        return $this->responseWithSuccess('Successfully save',$transaction);
+
+    }
+    public function deleteTransaction($id){
+        $transaction=Transaction::findOrFail($id)->delete();
+
+        return $this->responseWithSuccess('Successfully deleted',$transaction);
+
+    }
+    public function updateTransaction(Request $request, $id){
+
+        $transaction=Transaction::findOrFail($id);
+        $transaction->amount=$request->amount;
+        $transaction->note=$request->note;
+        $transaction->save();
+
+        return $this->responseWithSuccess('Successfully save',$transaction);
     }
 
 }

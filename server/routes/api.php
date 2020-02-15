@@ -24,4 +24,7 @@ use Illuminate\Http\Request;
         Route::post('me', 'AuthController@me');
         
         Route::get('transactions', 'TransactionController@transactions');
+        Route::post('transaction', 'TransactionController@createTransaction');
+        Route::delete('transaction/{id}', 'TransactionController@deleteTransaction');
+        Route::put('transaction/{id}', 'TransactionController@updateTransaction');
     });
