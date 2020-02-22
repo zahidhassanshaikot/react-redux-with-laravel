@@ -72,6 +72,16 @@ class TransactionController extends Controller
     }
     public function updateTransaction(Request $request, $id){
 
+            $validator = Validator::make($request->all(), [
+                'amount' => 'required|max:255',
+                'type' => 'required'
+            ]);
+
+            if($validator->fails()){
+                // return $validator->getMessageBag()->all();
+                return response()->json($validator->errors(), 422);
+            }
+
         $transaction=Transaction::findOrFail($id);
         $transaction->amount=$request->amount;
         $transaction->note=$request->note;
